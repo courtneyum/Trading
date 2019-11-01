@@ -5,6 +5,8 @@ from sklearn.preprocessing import MinMaxScaler
 import math
 import copy
 
+from Param import Param
+
 class Datatype:
     TRAIN = "train"
     TEST = "test"
@@ -43,9 +45,9 @@ def ema(data, period):
 #END ema
 
 # BEGIN
-path = "K:/My Drive/School/DataScienceComp/Data/"
-filenames = ["DataBAX.csv", "DataCGB.csv", "DataCURA.csv", "DataSXF.csv"]
-columns = ["open", "high", "low", "close", "time"]
+path = Param.path
+filenames = Param.filenames
+columns = Param.columns
 
 for i in range(0, len(filenames)):
     # fetch unsmoothed data
