@@ -6,29 +6,20 @@ import math
 from Param import Param
 
 class Datatype:
-    TRAIN = "train"
-    TEST = "test"
+    TRAIN = 1
+    TEST = 2
 
 def get_data(path, filename, type, n_in, n_out, time_steps, batch_size):
-    # retrieve data and filter out unwanted columns
-    filename = path + "smoothed_" + type + filename
+    # retrieve data and drop unwanted columns
+    if type == Datatype.TRAIN:
+        filename = path + "smoothed_train" + filename
+    else:
+        filename = path + "smoothed_test" + filename
+    #END if
+    
     df = pd.read_csv(filename)
     df.drop(df.columns[0], axis=1, inplace=True)
     df.drop(df.columns[len(df.columns) - 1], axis=1, inplace=True)
-
-    # normalize features
-    if type == Datatype.TRAIN:
-        scaler = MinMaxScaler()
-    else:
-        scaler = joblib.load(Param.scaler_filename)
-    #END if
-
-   
-    df.iloc[:,:] = scaler.fit_transform(df)
-
-    if type == Datatype.TRAIN:
-        joblib.dump(scaler, Param.scaler_filename)
-    # END if
 
     # Reframe as a supervised learning problem
     df_reframed = series_to_supervised(df, n_in, n_out)
@@ -37,9 +28,25 @@ def get_data(path, filename, type, n_in, n_out, time_steps, batch_size):
 #END get_data
 
 def get_input(path, filename, type, n_in, n_out, time_steps, batch_size):
-    df = get_data(path, filename, type, n_in, n_out, time_steps, batch_size)
+    df_X = get_data(path, filename, type, n_in, n_out, time_steps, batch_size)
     #split data into input and output
-    df_X = df.iloc[:, 0:5*n_in]
+    df_X.drop(df_X.columns[4*n_in:len(df_X.columns)], axis=1, inplace=True)
+
+    # fetch scaler
+    if type == Datatype.TRAIN:
+        scaler = MinMaxScaler()
+    else:
+        scaler = joblib.load(Param.input_scaler_filename)
+    #END if
+    
+    # normalize features
+    df_X.iloc[:,:] = scaler.fit_transform(df_X)
+
+    #END if
+
+    if type == Datatype.TRAIN:
+        joblib.dump(scaler, Param.input_scaler_filename)
+    # END if
 
     # cut the data off so that the number of rows is divisible by time_steps*batch_size
     div_by = time_steps*batch_size
@@ -53,14 +60,35 @@ def get_input(path, filename, type, n_in, n_out, time_steps, batch_size):
     #reshape input to be 3D [samples, timesteps, features]
     num_samples = math.floor(X.shape[0]/time_steps) #math.floor input should be an integer but we have to cast to use as an index
     X = X.reshape((num_samples, time_steps, X.shape[1]))
+    X = X[range(len(X)-1)]
 
     return X
 #END get_input
 
 def get_output(path, filename, type, n_in, n_out, time_steps, batch_size):
-    df = get_data(path, filename, type, n_in, n_out, time_steps, batch_size)
-    #split data into input and output
-    df_Y = df.iloc[:, 5*n_in]
+    df_Y = get_data(path, filename, type, n_in, n_out, time_steps, batch_size)
+    df_Y.drop(df_Y.columns[0:4*n_in], axis=1, inplace=True)
+    df_Y.drop(df_Y.columns[1:len(df_Y.columns)], axis=1, inplace=True)
+
+    # fetch scaler
+    if type == Datatype.TRAIN:
+        scaler = MinMaxScaler()
+    else:
+        scaler = joblib.load(Param.output_scaler_filename)
+    #END if
+    
+    # normalize features
+    if type == Datatype.TRAIN:
+        index = df_Y.index
+        columns = df_Y.columns
+        values = scaler.fit_transform(df_Y.values.reshape(-1, 1))
+
+        df_Y = pd.DataFrame(data=values, index=index, columns=columns)
+    #END if
+
+    if type == Datatype.TRAIN:
+        joblib.dump(scaler, Param.output_scaler_filename)
+    # END if
 
     # cut the data off so that the number of rows is divisible by time_steps*batch_size
     div_by = time_steps*batch_size
@@ -72,7 +100,7 @@ def get_output(path, filename, type, n_in, n_out, time_steps, batch_size):
     Y = df_Y_cut.values
 
     #output should have same number of rows as input, take every xth value as output
-    Y = Y[range(0, len(Y), time_steps)]
+    Y = Y[range(time_steps+1, len(Y), time_steps)]
 
     return Y
 #END get_output

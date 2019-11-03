@@ -13,6 +13,7 @@ class Param:
     file_number = 0
 
     model_filename = "model" + str(file_number) + ".h5"
-    #model_filename = "lstm_model.h5"
+    best_model_filename = "best_model" + str(file_number) + ".h5"
 
-    scaler_filename = "scaler.save"
+    input_scaler_filename = "input_scaler.save"
+    output_scaler_filename = "output_scaler.save"
