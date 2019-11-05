@@ -69,8 +69,11 @@ for i in range(0, len(filenames)):
         df_train_smooth.iloc[:,j] = ema(df_train.iloc[:, j], span)
         df_test_smooth.iloc[:,j] = ema(df_test.iloc[:, j], span)
 
-        #plt.plot(df_train.iloc[:,j], 'r--', df_train_smooth.iloc[:,j], 'b--')
-        #plt.show()
+        plt.plot(df_train.iloc[:,j], 'r--', df_train_smooth.iloc[:,j], 'b--')
+        plt.show()
+
+        plt.plot(df_test.iloc[:,j], 'r--', df_test_smooth.iloc[:,j], 'b--')
+        plt.show()
     #END for loop
     
     # save data

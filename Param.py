@@ -1,7 +1,7 @@
 class Param:
     path = "K:/My Drive/School/DataScienceComp/Data/"
     filenames = ["DataBAX.csv", "DataCGB.csv", "DataCURA.csv", "DataSXF.csv"]
-    columns = ["open", "high", "low", "close", "time"]
+    columns = ["open", "high", "low", "close"]
 
     time_steps = 10
     batch_size = 100
@@ -9,6 +9,7 @@ class Param:
 
     n_in = 2
     n_out = 1
+    n_features = len(columns*n_in)
 
     file_number = 0
 
