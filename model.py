@@ -25,7 +25,7 @@ def create_model():
     model.add(LSTM(units=20))
     model.add(Dropout(0.5))
     model.add(Dense(20,activation='relu'))
-    model.add(Dense(1,activation='sigmoid'))
+    model.add(Dense(Param.n_targets,activation='sigmoid'))
 
     optimizer = optimizers.Adam(lr=0.0001)
     model.compile(loss='mape', optimizer=optimizer)
@@ -34,40 +34,29 @@ def create_model():
 def mean_absolute_percentage_error(y_true, y_pred): 
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
-def model(file_number=Param.file_number):
-
-    # set parameters
-    path = Param.path
-    filenames = Param.filenames
-
-    time_steps = Param.time_steps
-    batch_size = Param.batch_size
-
-    n_in = Param.n_in
-    n_out = Param.n_out
-
-   # retrieve and format training data
+def model(file_number):
+    # retrieve and format training data
     print("Fetching training data.")
-    train_X = dh.get_input(path, filenames[file_number], dh.Datatype.TRAIN, n_in, n_out, time_steps, batch_size)
-    train_Y = dh.get_output(path, filenames[file_number], dh.Datatype.TRAIN, n_in, n_out, time_steps, batch_size)
+    train_X = dh.get_training_input(Param.filenames[file_number])
+    train_Y = dh.get_training_output(Param.filenames[file_number])
 
     # checkpoint
-    filepath=Param.best_model_filename
+    filepath=Param.best_model_filename + str(file_number) + ".h5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
     callbacks_list = [checkpoint]
 
     # These values help us determine where to split the data for training and validation
-    num_batches = math.floor(train_X.shape[0]/batch_size)
+    num_batches = math.floor(train_X.shape[0]/Param.batch_size)
     num_batches_val = math.floor(Param.validation_split*num_batches)
     num_batches_train = num_batches - num_batches_val
     #num_folds = math.ceil(num_batches/num_batches_val)
 
     # split data into training and validation sets
-    val_X = train_X[num_batches_train*batch_size:, :, :]
-    val_Y = train_Y[num_batches_train*batch_size:]
+    val_X = train_X[num_batches_train*Param.batch_size:, :, :]
+    val_Y = train_Y[num_batches_train*Param.batch_size:]
 
-    train_X = train_X[0:num_batches_train*batch_size, :, :]
-    train_Y = train_Y[0:num_batches_train*batch_size]
+    train_X = train_X[0:num_batches_train*Param.batch_size, :, :]
+    train_Y = train_Y[0:num_batches_train*Param.batch_size]
 
     # fit network
     model = create_model()
@@ -86,6 +75,6 @@ def model(file_number=Param.file_number):
     plt.show()
 
     # save model to file
-    model.save(Param.model_filename)
+    model.save("Plots/" + Param.model_filename + str(file_number) + ".h5")
     print("Saved model " + str(file_number) + " to disk")
 # END model

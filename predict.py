@@ -9,10 +9,57 @@ import numpy as np
 import dataHelper as dh
 from Param import Param
 
-def predict(file_number=Param.file_number):
-    path = Param.path
-    filenames = Param.filenames
+def predict(file_number, compute_predictions=Param.compute_predictions):
 
+    # load model from single file
+    model = load_model(Param.best_model_filename + str(file_number) + ".h5")
+    print("Loaded model from disk")
+
+    # load scaler
+    scaler = joblib.load(Param.output_scaler_filename)
+
+    # load test data
+    print("Fetching test data.")
+    test_X = dh.get_testing_input(Param.filenames[file_number])
+    test_Y = dh.get_testing_output(Param.filenames[file_number])
+
+    # can't predict the first 10 timesteps
+    test_Y = test_Y[range(Param.time_steps, test_Y.shape[0])]
+
+    # make predictions
+    print("Predicting the future.")
+    if compute_predictions:
+        predictions = np.zeros([test_X.shape[0] - Param.time_steps, Param.n_targets])
+        for i in range(test_X.shape[0] - Param.time_steps):
+            test_X_i = test_X[range(i, i + Param.time_steps)]
+            predictions[i, :] = model.predict(test_X_i.reshape(1, 10, 8), batch_size=Param.batch_size)
+
+        # scale values back
+        predictions = scaler.inverse_transform(predictions)
+        np.save(Param.predictions_filename + str(file_number), predictions)
+    else:
+        predictions = np.load(Param.predictions_filename)
+    # END if
+
+    # plot to compare predicted with actual
+    
+    n_out = Param.n_out
+    for j in range(Param.n_out):
+        fig, axs = plt.subplots(4)
+        fig.suptitle('Time t' + str(j))
+        for i in range(4):
+            axs[i].plot(predictions[:, j*n_out+i], label='predicted')
+            axs[i].plot(test_Y[:, j*n_out+i], label='actual')
+            axs[i].legend()
+            axs[i].set_title(Param.columns[i])
+            axs[i].set(xlabel = 'Timestep', ylabel = 'Price')
+        # END for
+        plt.savefig("Plots/" + Param.price_fig_filename + str(file_number) + str(j) + ".png")
+        print("Saved plot for model " + str(file_number) + " and timestep " + str(j))
+        plt.show()
+    # END for
+
+def test(file_number):
     # load model from single file
     model = load_model(Param.best_model_filename)
     print("Loaded model from disk")
@@ -20,32 +67,32 @@ def predict(file_number=Param.file_number):
     # load scaler
     scaler = joblib.load(Param.output_scaler_filename)
 
-    # Choose these parameters so that we keep as much data as possible
-    time_steps = Param.time_steps
-    batch_size = Param.batch_size
-
-    n_in = Param.n_in
-    n_out = Param.n_out
-
     # load test data
     print("Fetching test data.")
-    test_X = dh.get_input(path, filenames[file_number], dh.Datatype.TEST, n_in, n_out, time_steps, batch_size)
-    test_Y = dh.get_output(path, filenames[file_number], dh.Datatype.TEST, n_in, n_out, time_steps, batch_size)
+    test_X = dh.get_testing_input(Param.filenames[file_number])
+    test_Y = dh.get_testing_output(Param.filenames[file_number])
 
     # make predictions
     print("Predicting the future.")
-    predictions = model.predict(test_X, batch_size=100)
+    predictions = model.predict(test_X, batch_size=Param.batch_size)
 
     # scale values back
-    predictions = scaler.inverse_transform(predictions.reshape(-1, 1))
+    predictions = scaler.inverse_transform(predictions)
 
     # plot to compare predicted with actual
-    plt.plot(predictions, label='predicted')
-    plt.plot(test_Y, label='actual')
-    plt.legend()
-    plt.title("Predicted price vs. Actual price")
-    plt.xlabel("Timestep")
-    plt.ylabel("Price")
-    plt.savefig("Price" + str(file_number) + ".png")
-    print("Saved plot for model " + str(file_number))
-    plt.show()
+    
+    n_out = Param.n_out
+    for j in range(Param.n_out):
+        fig, axs = plt.subplots(4)
+        fig.suptitle('Time t' + str(j))
+        for i in range(4):
+            axs[i].plot(predictions[:, j*n_out+i], label='predicted')
+            axs[i].plot(test_Y[:, j*n_out+i], label='actual')
+            axs[i].legend()
+            axs[i].set_title(Param.columns[i])
+            axs[i].set(xlabel = 'Timestep', ylabel = 'Price')
+        # END for
+        plt.savefig("Price" + str(file_number) + str(j) + ".png")
+        print("Saved plot for model " + str(file_number) + " and timestep " + str(j))
+        plt.show()
+    # END for

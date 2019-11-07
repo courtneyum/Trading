@@ -1,5 +1,7 @@
 venv/
 __pycache__/
-*vscode/
-*.asv
 *.json
+*.save
+*.gitignore
+*.ini
+*.asv
