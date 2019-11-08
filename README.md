@@ -22,7 +22,7 @@ IMPORTANT: This procedure and our code has only been tested on Windows. If you t
 	* keras
 	* sklearn
 	* joblib  
-with the command "pip install [package_name]" in the Visual Studio Code terminal.
+with the command `pip install [package_name]` in the Visual Studio Code terminal.
 9. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
 10. Now you should be ready to run our program. The entry point is "driver.py".    
 
@@ -39,22 +39,22 @@ If Param.compute_predictions = False, then it will load precomputed predictions.
 If either of these parameters are set to True, it will take 1-2 hours to compute.
 
 **model.py**
-1. **create_model()** The network architecture is defined here as well as most of its hyperparameters. Two LSTM layers are interleaved with Dropout to prevent overfitting. We use an Adam optimizer with a learning rate of 0.0001. As a loss function, we use mean absolute percentage error so that we see error in terms of a percentage. We found that mean absolute error or mean squared error did not give an accurate representation of the scale of the error. However, there is the risk of dividing by zero if there is a true target value equal to zero. This would force us to use a different loss function.
-3. **model** This is the main function of this module. Here, we load in the data, perform a training/validation split, train the model with the call to model.fit(...) and then plot the results.
+1. `create_model()` The network architecture is defined here as well as most of its hyperparameters. Two LSTM layers are interleaved with Dropout to prevent overfitting. We use an Adam optimizer with a learning rate of 0.0001. As a loss function, we use mean absolute percentage error so that we see error in terms of a percentage. We found that mean absolute error or mean squared error did not give an accurate representation of the scale of the error. However, there is the risk of dividing by zero if there is a true target value equal to zero. This would force us to use a different loss function.
+3. `model()` This is the main function of this module. Here, we load in the data, perform a training/validation split, train the model with the call to model.fit(...) and then plot the results.
 
 **predict.py**
-1. **predict** Here, we load the model that the data was trained on and fetch the testing data. The past 10 days are used to predict the next three days.
-2. **evaluate_predictions** Here we calculate the accuracy of the model for each target. The accuracy is the number of times that the model guesses the sign of a change in price correctly divided by the total number of guesses.
+1. `predict()` Here we load the model that the data was trained on and fetch the testing data. The past 10 days are used to predict the next three days.
+2. `evaluate_predictions()` Here we calculate the accuracy of the model for each target. The accuracy is the number of times that the model guesses the sign of a change in price correctly divided by the total number of guesses.
 
 **dataHelper.py**
-1. **get_data()** This function fetches the wanted data from csv, removes unwanted columns, and converts it to the format with columns [t-1, t-2, t, t+1, t+2] for each column in the loaded data. T stands for timestep.
-2. **get_training_input()** This function fetches input data for training purposes. We fetch the training data and remove target columns. Then we scale it using a min_max scaler so that each data point is between 0 and 1. Then we save this scaler for use later. We ensure that the length of the data is divisible by time_steps * batch_size where time_steps is the number of time_steps used to make a prediction and batch_size is the amount of samples used to train at a time. A sample consists of time_steps * n_features datapoints.
-3. **get_training_output()** This function fetches output data for training purposes. The differences here are that we remove the feature columns after fetching the data, and at the end we only take every 10th value so that there is the same number of output samples as input samples.
-4. **get_testing_input** The difference between this function and the training function is that we do not reshape to 3 dimensions. This reshaping is done at the predictions phase.
-5. **get_testing_output** The difference between this function and the training function is that we keep every value.
-6. **series_to_supervised** Supervised learning regression problems require a certain data arrangement. This is best explained [here](https://machinelearningmastery.com/convert-time-series-supervised-learning-problem-python/) where we got this code from.
+1. `get_data()` This function fetches the wanted data from csv, removes unwanted columns, and converts it to the format with columns [t-1, t-2, t, t+1, t+2] for each column in the loaded data. T stands for timestep.
+2. `get_training_input()` This function fetches input data for training purposes. We fetch the training data and remove target columns. Then we scale it using a min_max scaler so that each data point is between 0 and 1. Then we save this scaler for use later. We ensure that the length of the data is divisible by time_steps * batch_size where time_steps is the number of time_steps used to make a prediction and batch_size is the amount of samples used to train at a time. A sample consists of time_steps * n_features datapoints.
+3. `get_training_output()` This function fetches output data for training purposes. The differences here are that we remove the feature columns after fetching the data, and at the end we only take every 10th value so that there is the same number of output samples as input samples.
+4. `get_testing_input()` The difference between this function and the training function is that we do not reshape to 3 dimensions. This reshaping is done at the predictions phase.
+5. `get_testing_output()` The difference between this function and the training function is that we keep every value.
+6. `series_to_supervised()` Supervised learning regression problems require a certain data arrangement. This is best explained [here](https://machinelearningmastery.com/convert-time-series-supervised-learning-problem-python/) where we got this code from.
 
 **prepare.py**
-1. **get_data** A simpler version of the function from **data_helper**. Just read the csv and drop unwanted columns.
-2. **ema** Smooth the data with an exponential moving average to reduce noise.
+1. `get_data()` A simpler version of the function from **data_helper**. Just read the csv and drop unwanted columns.
+2. `ema()` Smooth the data with an exponential moving average to reduce noise.
 3. This is a script and should be run before the driver program. No need for the given data set as smoothed versions have been provided.
