@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import joblib
 import math
+from pathlib import Path
 
 from Param import Param
 
@@ -12,12 +13,12 @@ class Datatype:
 def get_data(path, filename, type, n_in, n_out, time_steps, batch_size):
     # retrieve data and drop unwanted columns
     if type == Datatype.TRAIN:
-        filename = path + "smoothed_train" + filename
+        filename = Path(path) / ("smoothed_train" + filename)
     else:
-        filename = path + "smoothed_test" + filename
+        filename = Path(path) / ("smoothed_test" + filename)
     #END if
     
-    df = pd.read_csv(filename)
+    df = pd.read_csv(str(filename))
     df.drop(df.columns[0], axis=1, inplace=True)
     df.drop(df.columns[len(df.columns) - 1], axis=1, inplace=True)
 
@@ -40,7 +41,7 @@ def get_training_input(filename, path=Param.path, n_in=Param.n_in, n_out=Param.n
 
     #END if
 
-    joblib.dump(scaler, Param.input_scaler_filename)
+    joblib.dump(scaler, str(Path(Param.models_dir) / Param.input_scaler_filename))
 
     # cut the data off so that the number of rows is divisible by time_steps*batch_size
     div_by = time_steps*batch_size
@@ -73,7 +74,7 @@ def get_training_output(filename, path=Param.path, n_in=Param.n_in, n_out=Param.
     values = scaler.fit_transform(df_Y.values)
     df_Y = pd.DataFrame(data=values, index=index, columns=columns)
 
-    joblib.dump(scaler, Param.output_scaler_filename)
+    joblib.dump(scaler, str(Path(Param.models_dir) / Param.output_scaler_filename))
 
     # cut the data off so that the number of rows is divisible by time_steps*batch_size
     div_by = time_steps*batch_size
@@ -96,7 +97,7 @@ def get_testing_input(filename, path=Param.path, n_in=Param.n_in, n_out=Param.n_
     df_X.drop(df_X.columns[4*n_in:len(df_X.columns)], axis=1, inplace=True)
 
     # fetch scaler
-    scaler = joblib.load(Param.input_scaler_filename)
+    scaler = joblib.load(str(Path(Param.models_dir) / Param.input_scaler_filename))
     
     # normalize features
     df_X.iloc[:,:] = scaler.fit_transform(df_X)

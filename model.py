@@ -12,6 +12,7 @@ from keras.models import model_from_json
 from keras.wrappers.scikit_learn import KerasRegressor
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
+from pathlib import Path
 
 import dataHelper as dh
 from Param import Param
@@ -27,12 +28,9 @@ def create_model():
     model.add(Dense(20,activation='relu'))
     model.add(Dense(Param.n_targets,activation='sigmoid'))
 
-    optimizer = optimizers.Adam(lr=0.0001)
-    model.compile(loss='mape', optimizer=optimizer)
+    optimizer = optimizers.Adam(lr=Param.learning_rate)
+    model.compile(loss=Param.loss, optimizer=optimizer)
     return model
-
-def mean_absolute_percentage_error(y_true, y_pred): 
-    return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 def model(file_number):
     # retrieve and format training data
@@ -41,8 +39,8 @@ def model(file_number):
     train_Y = dh.get_training_output(Param.filenames[file_number])
 
     # checkpoint
-    filepath=Param.best_model_filename + str(file_number) + ".h5"
-    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    filepath= Path(Param.data_dir) / (Param.best_model_filename + str(file_number) + ".h5")
+    checkpoint = ModelCheckpoint(str(filepath), monitor='val_loss', verbose=1, save_best_only=True, mode='min')
     callbacks_list = [checkpoint]
 
     # These values help us determine where to split the data for training and validation
@@ -70,11 +68,11 @@ def model(file_number):
     plt.title("Training loss vs. Validation loss")
     plt.xlabel("Timestep")
     plt.ylabel("Mean absolute percentage error")
-    plt.savefig("Loss" + str(file_number) + ".png")
+    plt.savefig(str(Path("Plots") / ("Loss" + str(file_number) + ".png")))
 
     plt.show()
 
     # save model to file
-    model.save("Plots/" + Param.model_filename + str(file_number) + ".h5")
+    model.save(str(Path(Param.models_dir) / (Param.model_filename + str(file_number) + ".h5")))
     print("Saved model " + str(file_number) + " to disk")
 # END model

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 import math
 import copy
+from pathlib import Path
 
 from Param import Param
 
@@ -13,9 +14,9 @@ class Datatype:
 
 def get_data(path, filename, type):
     # retrieve data and filter out unwanted columns
-    filename = path + type + filename
-    df = pd.read_csv(filename)
-    df = df.iloc[:, 0:5]
+    filename = Path(path) / (type + filename)
+    df = pd.read_csv(str(filename))
+    df.drop(df.columns[:4], axis=1, inplace=True)
     return df
 #END get_data
 
@@ -77,8 +78,8 @@ for i in range(0, len(filenames)):
     #END for loop
     
     # save data
-    df_train_smooth.to_csv(path+"smoothed_"+Datatype.TRAIN+filenames[i])
-    df_test_smooth.to_csv(path+"smoothed_"+Datatype.TEST+filenames[i])
+    df_train_smooth.to_csv(str(Path(path) / ("smoothed_"+Datatype.TRAIN+filenames[i])))
+    df_test_smooth.to_csv(str(Path(path) / ("smoothed_"+Datatype.TEST+filenames[i])))
 
     
 #END for loop
