@@ -88,8 +88,14 @@ This is a static class of parameters:
 * `show_plots` if true, the program will pause after each figure is created for you to view it. In order to continue, you will have to close the plots.
 * `col_to_trade_on` This is the column whose price fluctuations decide whether we make a trade. Currently it is the closing price, but can be changed to any of the other columns.
 
+**trade.py**
+1. `Signal` The signal class holds values for each possible position and also holds the current position.
+2. `trade()` This function keeps track of potential signals and acts when we have the maximum amount of information about a time step. It also keeps track of our profit.
+3. `add_signal()` This function adds a potential signal that may cause a real signal later on. When we get three (or `Param.n_out`) signals for a certain time step, then that time step is "full" and we attempt to make a trade.
+4. `check_position()` This function checks the value of `Signal.current_pos`. If we are in a long or short position, we calculate the change in price and add it to our profits. If the change in price corresponds with our position, we increase profit, otherwise we decrease.
+
 ### Our Trading Strategy ###
 
-Since we can predict the closing price three time steps into the future, for each time step we will have 3 predictions for what will happen the following time step. If most of these predictions are that the price will go up, the we enter a long position (buy). If most of these predictions are that the price will go down, we enter a short position (sell). For each timestep that we are in a long or short position, we calculate our profits. If we were right, then our profit increases by the change in price at that time step. If we were wrong, our profit decreases by the change in price that time step.  
+Since we can predict the closing price three (`Param.n_out`) time steps into the future, for each time step we will have 3 predictions for what will happen the following time step. If most of these predictions are that the price will go up, the we enter a long position (buy). If most of these predictions are that the price will go down, we enter a short position (sell). For each timestep that we are in a long or short position, we calculate our profits. If we were right, then our profit increases by the change in price at that time step. If we were wrong, our profit decreases by the change in price that time step.  
 This portion of our code is not as well tested as the rest due to time constraints. It appears though that this strategy is not extremely successful on three of the stocks. It does see some success on the SXF stock though. Profits are reported to the VS Code terminal when you run our program. Given more time, we would have liked to test our strategy more thoroughly and to search for one that is more widely successful.  
 We believe, however, that the neural network shows promise as an aid to a trading strategy due to the apparent accuracy of our predictions as evidenced by the "Price" plots. I believe that the model could be improved further and further customized for each stock given more time as well.
