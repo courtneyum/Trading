@@ -2,8 +2,8 @@ Setting up your Python environment:
 
 IMPORTANT: This procedure and our code has only been tested on Windows. If you try to setup or run our code on any other operating system, the code may require adjustment and your setup process may be more difficult.
 
-1. Install Miniconda Python 3.7 for Windows: https://docs.conda.io/en/latest/miniconda.html
-2. Install Visual Studio Code: https://code.visualstudio.com/download
+1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) Python 3.7 for Windows
+2. Install [Visual Studio Code](https://code.visualstudio.com/download)
 3. Open Visual Studio Code and install the Python extension from Microsoft.
 	The button to open the extensions panel is found on the left hand side.
 	If VSCode gives a popup suggesting that you install a linter, it is helpful but not needed. A linter will help catch 		errors in code before you run and will also colour code keywords for improved readability.
@@ -49,8 +49,8 @@ If either of these parameters are set to True, it will take 1-2 hours to compute
 2. **get_training_input()** This function fetches input data for training purposes. We fetch the training data and remove target columns. Then we scale it using a min_max scaler so that each data point is between 0 and 1. Then we save this scaler for use later. We ensure that the length of the data is divisible by time_steps * batch_size where time_steps is the number of time_steps used to make a prediction and batch_size is the amount of samples used to train at a time. A sample consists of time_steps * n_features datapoints.
 3. **get_training_output()** This function fetches output data for training purposes. The differences here are that we remove the feature columns after fetching the data, and at the end we only take every 10th value so that there is the same number of output samples as input samples.
 4. **get_testing_input** The difference between this function and the training function is that we do not reshape to 3 dimensions. This reshaping is done at the predictions phase.
-5.**get_testing_output** The difference between this function and the training function is that we keep every value.
-6. **series_to_supervised** Supervised learning regression problems require a certain data arrangement. This is best explained (here)[https://machinelearningmastery.com/convert-time-series-supervised-learning-problem-python/] where we got this code from.
+5. **get_testing_output** The difference between this function and the training function is that we keep every value.
+6. **series_to_supervised** Supervised learning regression problems require a certain data arrangement. This is best explained [here](https://machinelearningmastery.com/convert-time-series-supervised-learning-problem-python/) where we got this code from.
 
 **prepare.py**
 1. **get_data** A simpler version of the function from **data_helper**. Just read the csv and drop unwanted columns.
