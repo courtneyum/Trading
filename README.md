@@ -7,22 +7,24 @@ IMPORTANT: This procedure and our code has only been tested on Windows. If you t
 3. Open Visual Studio Code and install the Python extension from Microsoft.
 	The button to open the extensions panel is found on the left hand side.
 	If VSCode gives a popup suggesting that you install a linter, it is helpful but not needed. A linter will help catch 		errors in code before you run and will also colour code keywords for improved readability.
-4. Select [Miniconda Path]\python.exe as your Python interpreter.
-5. The following need to be added to your "Path" environment variable:
-	[Miniconda Path]\Scripts
-	[Miniconda Path]
-	[Miniconda Path]\Library\bin
-6. Install the following packages: 
-	pandas
-	matplotlib
-	numpy
-	theano
-	keras
-	sklearn
-	joblib
+4. Open the "Trading" folder in Visual Studio Code. Double click "driver.py" to open this file in the editor.
+5. Look at the bottom right on the VS Code window and find where it says "Plain Text". Click here and select "Python" from the dropdown that appears.
+6. Next, VS Code should automatically ask you to select a Python interpreter. Select [Miniconda Path]\python.exe as your Python interpreter. Your selection should become apparent in the bottom left of the VS Code window.
+7. The following need to be added to your "Path" environment variable:  
+	* [Miniconda Path]\Scripts
+	* [Miniconda Path]
+	* [Miniconda Path]\Library\bin
+8. Install the following packages: 
+	* pandas  
+	* matplotlib  
+	* numpy
+	* theano
+	* keras
+	* sklearn
+	* joblib  
 with the command "pip install [package_name]" in the Visual Studio Code terminal.
-7. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
-8. Now you should be ready to run our program. Open the "Trading" folder in Visual Studio Code. The entry point is "driver.py".
+9. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
+10. Now you should be ready to run our program. The entry point is "driver.py".    
 
 
 We built a neural network based on LSTM (long short term memory) recurrent neural network architecture using the Keras library in python. This problem was framed as a regression problem.
