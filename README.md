@@ -58,3 +58,31 @@ If either of these parameters are set to True, it will take 1-2 hours to compute
 1. `get_data()` A simpler version of the function from **data_helper**. Just read the csv and drop unwanted columns.
 2. `ema()` Smooth the data with an exponential moving average to reduce noise.
 3. This is a script and should be run before the driver program. No need for the given data set as smoothed versions have been provided.
+
+**Param.py**
+This is a static class of parameters:  
+* `models_dir` is the location the precomputed models are saved to
+* `data_dir` is the location that the data is stored. Precomputed predictions also get stored here.
+* `filenames` is an array containing each of the filenames of the data that we wish to process.
+* `columns` is an array of the relevant column names
+* `time_steps` is the number of time_steps to include in a training sample. If this number is higher then the network gets more information for each prediction, and if it is lower it gets less.
+* `batch_size` amount of samples to train on at a time.
+* `validation_split` the amount of our training data to allow the network to use for validation.
+* `n_in` the number of time steps of each feature to train on.
+* `n_out` the number of time steps of each target to predict.
+* `n_features` the total number of features
+* `n_targets` the total number of targets. Currently, each columns is used as a feature and a target, but at different times.
+* `loss` The loss function to use. This built in function will measure error in our network. Other options are "mae" (mean absolute error) or "mse" (mean squared error).
+* `learning_rate` a hyperparameter required by the optimizer (we use Adam) of the network. Small learning rate helps us avoid skipping over the optimum configuration.
+* `model_verbosity` determines how much output you want to see from the network during training. For speed, use 0. 
+* `model_filename` the name to give the precomputed model files. An index will be appended to each one to differentiate them.
+* `best_model_filename` same as previous, but the name for the best model. This is the model with the minimum validation loss.
+* `input_scaler_filename` is the filename of the input scaler that will be saved during training to be used during testing.
+* `output_scaler_filename` same as previous but for the output
+* `predictions_filename` the filename to give computed predictions when saving. An index will be appended to differentiate them.
+* `price_fig_filename` the filename to give figures that compare predicted prices and actual prices during testing. Again, an index will be appended to differentiate.
+* `remodel` a boolean that tells the program whether to train, or use a precomputed model.
+* `compute_predictions` a boolean that tells the program whether to compute predictions, or load precomputed ones.
+* `use_best_model` if True, we use the best model from `best_model_filename`. Otherwise, we use the final model that is created after all training has finished.
+* `show_plots` if true, the program will pause after each figure is created for you to view it. In order to continue, you will have to close the plots.
+* `col_to_trade_on` This is the column whose price fluctuations decide whether we make a trade. Currently it is the closing price, but can be changed to any of the other columns.
