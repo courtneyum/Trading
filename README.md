@@ -1,4 +1,4 @@
-Setting up your Python environment: 
+### Setting up your Python environment ###
 
 IMPORTANT: This procedure and our code has only been tested on Windows. If you try to setup or run our code on any other operating system, the code may require adjustment and your setup process may be more difficult.
 
@@ -26,6 +26,7 @@ with the command `pip install [package_name]` in the Visual Studio Code terminal
 9. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
 10. Now you should be ready to run our program. The entry point is "driver.py".    
 
+### Our Code ###
 
 We built a neural network based on LSTM (long short term memory) recurrent neural network architecture using the Keras library in python. This problem was framed as a regression problem.
 
@@ -86,3 +87,9 @@ This is a static class of parameters:
 * `use_best_model` if True, we use the best model from `best_model_filename`. Otherwise, we use the final model that is created after all training has finished.
 * `show_plots` if true, the program will pause after each figure is created for you to view it. In order to continue, you will have to close the plots.
 * `col_to_trade_on` This is the column whose price fluctuations decide whether we make a trade. Currently it is the closing price, but can be changed to any of the other columns.
+
+### Our Trading Strategy ###
+
+Since we can predict the closing price three time steps into the future, for each time step we will have 3 predictions for what will happen the following time step. If most of these predictions are that the price will go up, the we enter a long position (buy). If most of these predictions are that the price will go down, we enter a short position (sell). For each timestep that we are in a long or short position, we calculate our profits. If we were right, then our profit increases by the change in price at that time step. If we were wrong, our profit decreases by the change in price that time step.  
+This portion of our code is not as well tested as the rest due to time constraints. It appears though that this strategy is not extremely successful. Our profits are small (but positive!) and are reported to the VS Code terminal when you run our program. Given more time, we would have liked to test our strategy more thoroughly and to search for a more profitable one.  
+We believe, however, that the neural network shows promise as an aid to a trading strategy due to the apparent accuracy of our predictions. I believe that the model could be improved further and further customized for each stock given more time as well.
