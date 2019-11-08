@@ -15,6 +15,7 @@ class Param:
     n_targets = len(columns)*n_out
     loss = "mape"
     learning_rate = 0.0001
+    model_verbosity = 2 # 0 = silent, 1 = progress bar, 2 = one line per epoch
 
     model_filename = "model"
     best_model_filename = "best_model"
@@ -28,3 +29,7 @@ class Param:
     remodel = False
     compute_predictions = False
     use_best_model = True # as opposed to final model
+
+    show_plots = False
+
+    col_to_trade_on = columns[3]

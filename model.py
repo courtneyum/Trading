@@ -58,19 +58,21 @@ def model(file_number):
 
     # fit network
     model = create_model()
-    history = model.fit(train_X, train_Y, epochs=100, batch_size=Param.batch_size, validation_data=(val_X, val_Y), verbose=2,
+    history = model.fit(train_X, train_Y, epochs=100, batch_size=Param.batch_size, validation_data=(val_X, val_Y), verbose=Param.model_verbosity,
         callbacks=callbacks_list)
 
     # plot history
-    plt.plot(history.history['loss'], label='mape')
-    plt.plot(history.history['val_loss'], label='val_mape')
+    plt.plot(history.history['loss'], label=Param.loss)
+    plt.plot(history.history['val_loss'], label="val_"+ Param.loss)
     plt.legend()
     plt.title("Training loss vs. Validation loss")
     plt.xlabel("Timestep")
     plt.ylabel("Mean absolute percentage error")
     plt.savefig(str(Path("Plots") / ("Loss" + str(file_number) + ".png")))
 
-    plt.show()
+    if Param.show_plots:
+        plt.show()
+    # END if
 
     # save model to file
     model.save(str(Path(Param.models_dir) / (Param.model_filename + str(file_number) + ".h5")))

@@ -40,6 +40,7 @@ def predict(file_number, compute_predictions=Param.compute_predictions):
         np.save(str(Path(Param.data_dir) / (Param.predictions_filename + str(file_number))), predictions)
     else:
         predictions = np.load(str(Path(Param.data_dir) / (Param.predictions_filename + str(file_number) + ".npy")))
+        print("Loaded predictions from disk")
     # END if
 
     # evaluate accuracy
@@ -60,7 +61,10 @@ def predict(file_number, compute_predictions=Param.compute_predictions):
         # END for
         plt.savefig(str(Path("Plots/") / (Param.price_fig_filename + str(file_number) + str(j) + ".png")))
         print("Saved plot for model " + str(file_number) + " and timestep " + str(j))
-        plt.show()
+
+        if Param.show_plots:
+            plt.show()
+        # END if
     # END for
     return predictions
 # END predict

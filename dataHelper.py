@@ -172,3 +172,14 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
         agg.dropna(inplace=True)
     return agg
 #END series_to_supervised
+
+def get_column(column, output):
+    # get a single column from output. New width of output will be Param.n_out
+    col = Param.columns.index(column)
+    columns_to_keep = []
+    for i in range(Param.n_out):
+        columns_to_keep.append([len(Param.columns)*i + col])
+    # END for
+
+    output = output[:, columns_to_keep]
+    return output
