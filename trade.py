@@ -1,6 +1,7 @@
 from Param import Param
 import numpy as np
 import math
+import copy
 
 import dataHelper as dh
 
@@ -22,10 +23,19 @@ def trade(predictions, file_number):
     d = np.full([predictions.shape[0], 1], np.inf)
 
     profit = 0
+    gains = 0
+    losses = 0
+    prev_profit = 0
 
     for i in range(predictions.shape[0] - Param.n_out - 1):
         # have we made any money this time step?
+        prev_profit = copy.deepcopy(profit)
         profit = check_position(profit, actual[i, 0] - actual[i-1, 0])
+        if profit - prev_profit > 0:
+            gains += profit - prev_profit
+        else:
+            losses += prev_profit - profit
+        # END if
 
         curr = np.reshape(actual[i, 0], (-1,1))
         future = predictions[i+1, :]
@@ -47,6 +57,7 @@ def trade(predictions, file_number):
             # END if
         # END for
     # END for
+    print("Gains/Losses for stock " + str(file_number)+ ": " + str(gains/losses))
     return profit
             
 def add_signal(x, t, signal):
