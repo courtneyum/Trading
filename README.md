@@ -14,7 +14,8 @@ IMPORTANT: This procedure and our code has only been tested on Windows. If you t
 	* [Miniconda Path]\Scripts
 	* [Miniconda Path]
 	* [Miniconda Path]\Library\bin
-8. Install the following packages: 
+8. Restart your computer for the changes to your env vars to take effect.
+9. Install the following packages: 
 	* pandas  
 	* matplotlib  
 	* numpy
@@ -23,8 +24,8 @@ IMPORTANT: This procedure and our code has only been tested on Windows. If you t
 	* sklearn
 	* joblib  
 with the command `pip install [package_name]` in the Visual Studio Code terminal.
-9. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
-10. Now you should be ready to run our program. The entry point is "driver.py".    
+10. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
+11. Now you should be ready to run our program. The entry point is "driver.py".    
 
 ### Our Code ###
 
