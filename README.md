@@ -23,7 +23,7 @@ IMPORTANT: This procedure and our code has only been tested on Windows. If you t
 	* keras
 	* sklearn
 	* joblib  
-with the command `pip install [package_name]` in the Visual Studio Code terminal.
+with the command `conda install [package_name]` in the Visual Studio Code terminal.
 10. Find the file "scan_perform.c" as part of the project code. Insert this file in [Miniconda Path]\Lib\site-packages\theano\scan_module\c_code. If the c_code folder does not exist, create it at the specifed location. **Note that this is not our original code but was taken from github as a theano package bug fix.** If the file is already found at that location, then ignore this step.
 11. Now you should be ready to run our program. The entry point is "driver.py".    
 
